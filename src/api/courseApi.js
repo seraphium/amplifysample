@@ -1,22 +1,27 @@
-import { handleResponse, handleError } from "./apiUtils";
-const baseUrl = process.env.API_URL + "/courses/";
+import { API } from "aws-amplify";
+import {
+  createCourse as createCourseMutation,
+  updateCourse as updateCourseMutation,
+  deleteCourse as deleteCourseMutation,
+} from "../graphql/mutations";
+import { listCourses } from "../graphql/queries";
 
-export function getCourses() {
-  return fetch(baseUrl).then(handleResponse).catch(handleError);
+export async function getCourses() {
+  const apiData = await API.graphql({ query: listCourses });
+  return apiData.data.listCourses.items;
 }
 
-export function saveCourse(course) {
-  return fetch(baseUrl + (course.id || ""), {
-    method: course.id ? "PUT" : "POST", // POST for create, PUT to update when id already exists.
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(course),
-  })
-    .then(handleResponse)
-    .catch(handleError);
+export async function saveCourse(course) {
+  await API.graphql({
+    query: createCourseMutation,
+    variables: { input: course },
+  });
+  return course;
 }
 
-export function deleteCourse(courseId) {
-  return fetch(baseUrl + courseId, { method: "DELETE" })
-    .then(handleResponse)
-    .catch(handleError);
+export async function deleteCourse(courseId) {
+  await API.graphql({
+    query: deleteCourseMutation,
+    variables: { input: { id: courseId } },
+  });
 }

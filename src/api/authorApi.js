@@ -1,8 +1,16 @@
-import { handleResponse, handleError } from "./apiUtils";
-const baseUrl = process.env.API_URL + "/authors/";
+import { API } from "aws-amplify";
+import { listAuthors } from "../graphql/queries";
+import { createAuthor as createAuthorMutation } from "../graphql/mutations";
 
-export function getAuthors() {
-  return fetch(baseUrl)
-    .then(handleResponse)
-    .catch(handleError);
+export async function getAuthors() {
+  const apiData = await API.graphql({ query: listAuthors });
+  return apiData.data.listAuthors.items;
+}
+
+export async function saveAuthor(author) {
+  await API.graphql({
+    query: createAuthorMutation,
+    variables: { input: author },
+  });
+  return author;
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
-import { loadAuthors } from "../../redux/actions/authorActions";
+import { loadAuthors, saveAuthor } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import CourseForm from "./CourseForm";
 import { newCourse } from "../../../tools/mockData";
@@ -12,6 +12,7 @@ export function ManageCoursePage({
   courses,
   authors,
   loadAuthors,
+  saveAuthor,
   loadCourses,
   saveCourse,
   history,
@@ -23,7 +24,7 @@ export function ManageCoursePage({
 
   useEffect(() => {
     if (courses.length === 0) {
-      loadCourses().catch(error => {
+      loadCourses().catch((error) => {
         alert("Loading courses failed" + error);
       });
     } else {
@@ -31,17 +32,23 @@ export function ManageCoursePage({
     }
 
     if (authors.length === 0) {
-      loadAuthors().catch(error => {
+      loadAuthors().catch((error) => {
         alert("Loading authors failed" + error);
       });
     }
+    /*if (authors.length === 0) {
+      const mockAuthor = { name: "jackie" };
+      saveAuthor(mockAuthor).catch((error) => {
+        alert("Saving author failed" + error);
+      });
+    }*/
   }, [props.course]);
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setCourse(prevCourse => ({
+    setCourse((prevCourse) => ({
       ...prevCourse,
-      [name]: name === "authorId" ? parseInt(value, 10) : value
+      [name]: value,
     }));
   }
 
@@ -67,13 +74,13 @@ export function ManageCoursePage({
         toast.success("Course saved.");
         history.push("/courses");
       })
-      .catch(error => {
+      .catch((error) => {
         setSaving(false);
-        setErrors({ onSave: error.message });
+        setErrors({ onSave: error.errors[0].message });
       });
   }
 
-  return authors.length === 0 || courses.length === 0 ? (
+  return authors.length === 0 ? (
     <Spinner />
   ) : (
     <CourseForm
@@ -93,12 +100,13 @@ ManageCoursePage.propTypes = {
   courses: PropTypes.array.isRequired,
   loadCourses: PropTypes.func.isRequired,
   loadAuthors: PropTypes.func.isRequired,
+  saveAuthor: PropTypes.func.isRequired,
   saveCourse: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
 export function getCourseBySlug(courses, slug) {
-  return courses.find(course => course.slug === slug) || null;
+  return courses.find((course) => course.slug === slug) || null;
 }
 
 function mapStateToProps(state, ownProps) {
@@ -110,17 +118,15 @@ function mapStateToProps(state, ownProps) {
   return {
     course,
     courses: state.courses,
-    authors: state.authors
+    authors: state.authors,
   };
 }
 
 const mapDispatchToProps = {
   loadCourses,
   loadAuthors,
-  saveCourse
+  saveCourse,
+  saveAuthor,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ManageCoursePage);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
