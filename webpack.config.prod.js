@@ -23,7 +23,6 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      "process.env.API_URL": JSON.stringify("http://localhost:3001"),
     }),
     new HtmlWebpackPlugin({
       template: "src/index.html",
@@ -57,16 +56,17 @@ module.exports = {
             loader: "css-loader",
             options: {
               sourceMap: true,
-            }
-          }, {
+            },
+          },
+          {
             loader: "postcss-loader",
             options: {
               postcssOptions: {
                 plugins: [() => [require("cssnano")]],
+              },
+              sourceMap: true,
             },
-            sourceMap: true,
           },
-        }
         ],
       },
     ],
