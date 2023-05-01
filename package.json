@@ -23,6 +23,8 @@
     }
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^4.6.0",
+    "aws-amplify": "^5.1.4",
     "bootstrap": "5.0.2",
     "immer": "9.0.5",
     "prop-types": "15.7.2",
