@@ -1,12 +1,18 @@
-import { createStore, applyMiddleware} from "redux";
+import { configureStore } from "@reduxjs/toolkit";
+
 import rootReducer from "./reducers";
 import thunk from "redux-thunk";
+import createSagaMiddleware from "redux-saga";
+import chatSaga from "./saga/chatSaga";
 
-export default function configureStore(initialState) {
+const sagaMiddleware = createSagaMiddleware();
 
-  return createStore(
-    rootReducer,
-    initialState,
-    applyMiddleware(thunk)
-  );
-}
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: [thunk, sagaMiddleware()],
+  devTools: false,
+});
+
+sagaMiddleware.run(chatSaga);
+
+export default store;

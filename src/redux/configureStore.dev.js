@@ -11,7 +11,7 @@ const sagaMiddleware = createSagaMiddleware();
 const store = configureStore({
   reducer: rootReducer,
   middleware: [thunk, sagaMiddleware, reduxImmutableStateInvariant()],
-  devTools: process.env.NODE_ENV !== "production",
+  devTools: true,
 });
 
 sagaMiddleware.run(chatSaga);
