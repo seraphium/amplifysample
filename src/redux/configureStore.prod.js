@@ -9,7 +9,7 @@ const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: [thunk, sagaMiddleware()],
+  middleware: [thunk, sagaMiddleware],
   devTools: false,
 });
 
