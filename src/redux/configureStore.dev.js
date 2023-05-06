@@ -1,15 +1,19 @@
-import { createStore, applyMiddleware, compose } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
+
 import rootReducer from "./reducers";
 import reduxImmutableStateInvariant from "redux-immutable-state-invariant";
 import thunk from "redux-thunk";
+import createSagaMiddleware from "redux-saga";
+import chatSaga from "./saga/chatSaga";
 
-export default function configureStore(initialState) {
-  const composeEnhancers =
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
+const sagaMiddleware = createSagaMiddleware();
 
-  return createStore(
-    rootReducer,
-    initialState,
-    composeEnhancers(applyMiddleware(thunk, reduxImmutableStateInvariant()))
-  );
-}
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: [thunk, sagaMiddleware, reduxImmutableStateInvariant()],
+  devTools: process.env.NODE_ENV !== "production",
+});
+
+sagaMiddleware.run(chatSaga);
+
+export default store;

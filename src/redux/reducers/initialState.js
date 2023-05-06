@@ -1,5 +1,8 @@
 export default {
   courses: [],
   authors: [],
-  apiCallsInProgress: 0
+  chats: {
+    response: "",
+  },
+  apiCallsInProgress: 0,
 };

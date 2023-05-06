@@ -14,3 +14,6 @@ export const API_CALL_ERROR = "API_CALL_ERROR";
 // If it had one, our apiCallsInProgress counter would be decremented below zero
 // because we're not incrementing the number of apiCallInProgress when the delete request begins.
 export const DELETE_COURSE_OPTIMISTIC = "DELETE_COURSE_OPTIMISTIC";
+
+export const CREATE_CHAT = "CREATE_CHAT";
+export const GET_CHAT_RESPONSE_SUCCESS = "GET_CHAT_RESPONSE_SUCCESS";
