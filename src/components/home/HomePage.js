@@ -5,11 +5,13 @@ import TextInput from "../common/TextInput";
 import SelectInput from "../common/SelectInput";
 import { useDispatch, useSelector } from "react-redux";
 import { createChat } from "../../redux/actions/chatActions";
+import Spinner from "../common/Spinner";
+import "./homePage.css";
 
-const HomePage = (chats) => {
+const HomePage = ({ chats, loading }) => {
   const promptRef = useRef(null);
   const dispatch = useDispatch();
-  const response = chats?.chats?.body;
+  const response = chats?.body;
   console.warn("response in chat", response);
 
   const onSend = () => {
@@ -17,21 +19,34 @@ const HomePage = (chats) => {
     dispatch(createChat(prompt));
   };
 
+  const onKeyDown = (event) => {
+    if (event.key === "Enter") {
+      onSend();
+    }
+  };
+
   return (
     <div className="jumbotron">
       <h1>Pluralsight Administration</h1>
-      <input name="Prompt" label="Prompt" ref={promptRef} />
       <div>
+        <input
+          name="Prompt"
+          label="Prompt"
+          style={{ width: "80%", height: 45 }}
+          ref={promptRef}
+          onKeyDown={onKeyDown}
+        />
         <button
           className="btn btn-primary"
-          style={{ marginTop: 5 }}
+          style={{ marginLeft: 10, width: "10%", height: 40 }}
           onClick={onSend}
+          disabled={loading}
         >
           Send
         </button>
-        <div>
-          <span>{response}</span>
-        </div>
+      </div>
+      <div>
+        {loading ? <Spinner /> : <p className="multiline">{response}</p>}
       </div>
     </div>
   );
@@ -40,6 +55,7 @@ const HomePage = (chats) => {
 function mapStateToProps(state) {
   return {
     chats: state.chats,
+    loading: state.apiCallsInProgress > 0,
   };
 }
 export default connect(mapStateToProps)(HomePage);
