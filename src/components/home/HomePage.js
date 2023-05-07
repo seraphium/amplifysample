@@ -6,12 +6,15 @@ import SelectInput from "../common/SelectInput";
 import { useDispatch, useSelector } from "react-redux";
 import { createChat } from "../../redux/actions/chatActions";
 import Spinner from "../common/Spinner";
-import "./homePage.css";
+import PropTypes from "prop-types";
 
 const HomePage = ({ chats, loading }) => {
   const promptRef = useRef(null);
   const dispatch = useDispatch();
-  const response = chats?.body;
+  let response = chats?.body;
+  if (response) {
+    response = response.replace(/^"|"$/g, "");
+  }
   console.warn("response in chat", response);
 
   const onSend = () => {
@@ -25,9 +28,19 @@ const HomePage = ({ chats, loading }) => {
     }
   };
 
+  function TextareaWithNewlines({ text, ...props }) {
+    const [value, setValue] = useState(text?.replace(/\\n/g, "\n"));
+
+    return (
+      <textarea
+        {...props}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
+  }
   return (
-    <div className="jumbotron">
-      <h1>Pluralsight Administration</h1>
+    <div>
       <div>
         <input
           name="Prompt"
@@ -46,10 +59,24 @@ const HomePage = ({ chats, loading }) => {
         </button>
       </div>
       <div>
-        {loading ? <Spinner /> : <p className="multiline">{response}</p>}
+        {loading ? (
+          <Spinner />
+        ) : (
+          <TextareaWithNewlines
+            className="form-control"
+            rows="20"
+            text={response}
+            readOnly
+          />
+        )}
       </div>
     </div>
   );
+};
+
+HomePage.propTypes = {
+  chats: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
